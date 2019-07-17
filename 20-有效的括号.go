@@ -34,7 +34,7 @@ func isValid(s string) bool {    //栈
 	}
 	match:=func (a rune ,b rune) bool{  
 		switch{
-		case a=='['&&b==']' : return true
+		case a=='['&&b==']' : return true  //单引号''表示rune字面量，而""和``表示string字面量
 		case a=='('&&b==')' : return true
 		case a=='{'&&b=='}' : return true
 		default : return false
