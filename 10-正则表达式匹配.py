@@ -41,34 +41,63 @@
 # s = "mississippi"
 # p = "mis*is*p*."
 # 输出: false
+
+# class Solution:
+#     def isMatch(self, s: str, p: str) -> bool:
+#         if p == '':
+#             return s == ''  # 模式有可能匹配空字符串，放行空模式
+#
+#         match = bool(s) and p[0] in [s[0], '.']
+#         # p[0] in [s[0], '.'] 等价于 p[0] == s[0] or p[0] == '.'
+#         # 前者是判断元素在不在集合里，后者是遍历集合看与元素相不相等
+#         if len(p) >= 2 and p[1] == '*':
+#             return self.isMatch(s, p[2:]) or match and self.isMatch(s[1:], p)
+#         else:
+#             return match and self.isMatch(s[1:], p[1:])
+
+# 如果 p.charAt(j) == s.charAt(i) : dp[i][j] = dp[i-1][j-1]；
+# 如果 p.charAt(j) == '.' : dp[i][j] = dp[i-1][j-1]；
+# 如果 p.charAt(j) == '*'：
+#   如果 p.charAt(j-1) != s.charAt(i) : dp[i][j] = dp[i][j-2] // in this case, a* only counts as empty
+#   如果 p.charAt(i-1) == s.charAt(i) or p.charAt(i-1) == '.'：
+#       dp[i][j] = dp[i-1][j] // in this case, a* counts as multiple a
+#       or dp[i][j] = dp[i][j-1] // in this case, a* counts as single a
+#       or dp[i][j] = dp[i][j-2] // in this case, a* counts as empty
+# 作者：kao-la-7
+# 链接：https://leetcode-cn.com/problems/regular-expression-matching/solution/
+# dong-tai-gui-hua-zen-yao-cong-0kai-shi-si-kao-da-b/
+
+
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        return self.match("", s, p)
+        dp = [[False for _ in range(len(p) + 1)] for _ in range(len(s) + 1)]
+        # 空串模式串不匹配任何字符串，不过第零列本来就是 False
+        # for i in range(len(s) + 1):
+        #     dp[i][0] = False
+        dp[0][0] = True  # 空串匹配空串
+        for j in range(2, len(p) + 1, 2):  # 第零行，a*a*a* 模式可以匹配空串
+            if p[j - 1] == '*':
+                dp[0][j] = dp[0][j - 2]
 
-    def match(self, prev, s, p):
-        if s == '' or p == '':
-            if s == '' and p == '':
-                return True
-            else:
-                return False
+        for i in range(1, len(s) + 1):
+            for j in range(1, len(p) + 1):
+                if p[j - 1] in [s[i - 1], '.']:
+                    dp[i][j] = dp[i - 1][j - 1]
+                elif p[j - 1] == '*':
+                    if s[i - 1] == p[j - 2] or p[j - 2] == '.':
+                        dp[i][j] = dp[i][j - 1] or dp[i - 1][j] or dp[i][j - 2]
+                    else:  # a* only counts as empty
+                        dp[i][j] = dp[i][j - 2]
+                else:  # 字符不匹配
+                    dp[i][j] = False
 
-        if s[0] == p[0]:
-            return self.match(s[0], s[1:], p[1:])
-        elif p[0] == '.':
-            for i in range(97, 123):
-                ok = self.match(chr(i), s[1:], p[1:])
-                if ok:
-                    return True
-        else:
-            cnt = 0
-            for c in s:
-                if c == prev:
-                    cnt += 1
-                else:
-                    break
+        return dp[-1][-1]
 
-            for i in range(cnt):
-                ok = self.match(s[0], s[i + 1:], p[1:])
-                if ok:
-                    return True
-            return False
+
+if __name__ == "__main__":
+    inputs = [("aa", "a"), ("aa", "a*"), ("ab", ".*"), ("aab", "c*a*b"), ("mississippi", "mis*is*p*.")]
+    expects = [False, True, True, True, False]
+    for i in range(len(inputs)):
+        result = Solution().isMatch(inputs[i][0], inputs[i][1])
+        if expects[i] != result:
+            print("fail: expect %s: got %s" % (expects[i], result))
