@@ -1,4 +1,4 @@
-package LeetCode
+package main
 
 // 有 N 个花园，按从 1 到 N 标记。在每个花园中，你打算种下四种花之一。
 // paths[i] = [x, y] 描述了花园 x 到花园 y 的双向路径。
