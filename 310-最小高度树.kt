@@ -51,9 +51,10 @@ class Solution {
         }
 
         val queue = LinkedList<Int>()
-        degree.forEach {
-            if (it == 1) {
-                queue.add(it)
+        degree.forEachIndexed {
+            index, i ->
+            if (i == 1) {
+                queue.add(index)
             }
         }
 
@@ -75,4 +76,21 @@ class Solution {
 
         return res
     }
+
+
+}
+fun main(){
+    val p =Array(5){IntArray(2) }
+    p[0][0]=0
+    p[0][1]=3
+    p[1][0]=1
+    p[1][1]=3
+    p[2][0]=2
+    p[2][1]=3
+    p[3][0]=4
+    p[3][1]=3
+    p[4][0]=5
+    p[4][1]=4
+
+    Solution(). findMinHeightTrees(6,p)
 }
