@@ -14,13 +14,13 @@
 // 所有输入只包含小写字母 a-z 。
 object Solution {
   def longestCommonPrefix(strs: Array[String]): String = {
-    if(strs.isEmpty){ // `[]`
+    if (strs.isEmpty) { // `[]`
       return ""
     }
 
-    var i=0
-    while (strs.forall(i<_.length)&&strs.map(_(i)).distinct.length==1)
-      i+=1
-    strs(0).substring(0,i)
-}
+    var i = 0
+    while (strs.forall(i < _.length) && strs.map(_ (i)).distinct.length == 1)
+      i += 1
+    strs(0).substring(0, i)
+  }
 }
