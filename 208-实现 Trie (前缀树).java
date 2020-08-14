@@ -19,6 +19,8 @@ import java.util.*;
 
 class Trie {
     private final Character val;
+    // 这样示意性比较强，其实好的做法应该是直接创建 Trie[26]，毕竟比 HashMap 里的 Trie[64] 好；
+    // 至于为什么是 64：容量要求是 2 的幂，而负载因子是 0.75，0.75*32 < 26，会发生扩容，所以容量至少 64
     private final Map<Character, Trie> children = new HashMap<>(64);
     private boolean isEnd = false; // 必需的
 
@@ -114,5 +116,57 @@ class Trie {
         System.out.println(obj.startsWith("app"));
         obj.insert("app");
         System.out.println(obj.search("app"));
+    }
+}
+
+// 来自 LeetCode 的一个好的范例
+class Trie {
+    class Node {
+        Node[] v;
+        boolean end;
+        Node() {
+            v = new Node[26];
+            end = false;
+        }
+    }
+    
+    Node root;
+
+    /** Initialize your data structure here. */
+    public Trie() {
+        root = new Node();
+    }
+    
+    /** Inserts a word into the trie. */
+    public void insert(String word) {
+        Node node = root;
+        for (char ch : word.toCharArray()) {
+            if (node.v[ch - 'a'] == null)
+                node.v[ch - 'a'] = new Node();
+            node = node.v[ch - 'a'];
+        }
+        node.end = true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        Node node = root;
+        for (char ch : word.toCharArray()) {
+            if (node.v[ch - 'a'] == null)
+                return false;
+            node = node.v[ch - 'a'];
+        }
+        return node.end;
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    public boolean startsWith(String prefix) {
+        Node node = root;
+        for (char ch : prefix.toCharArray()) {
+            if (node.v[ch - 'a'] == null)
+                return false;
+            node = node.v[ch - 'a'];
+        }
+        return true;
     }
 }
