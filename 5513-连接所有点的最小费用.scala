@@ -36,31 +36,34 @@ import scala.collection.mutable
 
 object Solution { // Prim MST
   def minCostConnectPoints(points: Array[Array[Int]]): Int = {
-    type Pos = (Int, Int)
+    type Vertex = (Int, Int)
     type Distance = Int
-    type Edge = (Pos, Distance)
-    implicit val ord: Ordering[Edge] = Ordering.by[Edge, Int](_._2).reverse
+    type Edge = (Vertex, Vertex, Distance)
+    implicit val ord: Ordering[Edge] = Ordering.by[Edge, Int](_._3).reverse // descending order by Edge's length
 
-    val postions = points.map(p => (p(0), p(1))).toSet
-    val visited = mutable.Set[Pos]((points(0)(0), points(0)(1)))
+    val vertices = points.map(p => (p(0), p(1))).toSet // set of all vertices
+    val visited = mutable.Set[Vertex]((points(0)(0), points(0)(1))) // put the first vertex to start
 
-    def edgesOf(vertex: (Int, Int)) = vertex match {
-      case (x, y) =>
-        (postions diff visited map { pos =>
-          (pos, Math.abs(x - pos._1) + Math.abs(y - pos._2))
+    // generates the edges of one vertex whose partner is not visited
+    def edgesOf(vertex: (Int, Int)): Array[Edge] = vertex match {
+      case (x1, y1) =>
+        (vertices diff visited map { case other@(x2, y2) =>
+          (vertex, other, Math.abs(x1 - x2) + Math.abs(y1 - y2)) // first vertex stored in Edge is visited
         }).toArray
     }
 
     val queue = mutable.PriorityQueue[Edge](edgesOf((points(0)(0), points(0)(1))): _*)
     var cost = 0
-    while (visited.size < points.length) {
-      var (pos, distance) = queue.dequeue()
-      while (visited(pos)) {
-        (pos, distance) = queue.dequeue()
+    while (visited.size < points.length) { // until MST is generated
+      var (_, vertex, distance) = queue.dequeue()
+      while (visited(vertex)) { // make sure the second vertex stored in Edge is not visited
+        queue.dequeue() match {
+          case (_, v, l) => vertex = v; distance = l
+        }
       }
-      visited += pos
-      cost += distance
-      queue.enqueue(edgesOf(pos): _*)
+      visited += vertex // one vertex in MST
+      cost += distance // count as one edge in MST
+      queue.enqueue(edgesOf(vertex): _*)
     }
 
     cost
