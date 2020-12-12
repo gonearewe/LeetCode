@@ -33,10 +33,12 @@
 # 因此在第二轮只剩下第三个参议员拥有投票的权利,于是他可以宣布胜利
 
 import collections
+
+
 class Solution:
     def predictPartyVictory(self, senate: str) -> str:
-        rq = collections.deque([i for i, c in enumerate(senate) if c == 'R'])
-        dq = collections.deque([i for i, c in enumerate(senate) if c == 'D'])
+        rq = collections.deque([i for i, c in enumerate(senate) if c == "R"])
+        dq = collections.deque([i for i, c in enumerate(senate) if c == "D"])
         while rq and dq:
             if rq[0] < dq[0]:
                 rq.append(rq.popleft() + len(senate))
@@ -45,4 +47,3 @@ class Solution:
                 dq.append(dq.popleft() + len(senate))
                 rq.popleft()
         return "Radiant" if rq else "Dire"
-
