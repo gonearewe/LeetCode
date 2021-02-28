@@ -5,7 +5,7 @@
 
 输入: [3,2,1,5,6,4] 和 k = 2
 输出: 5
-示例 2:
+示例 2:
 
 输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
 输出: 4
@@ -23,7 +23,7 @@ func findKthLargest(nums []int, k int) int {   //Go标准库没有实现heap,只
             heap.Push(h,num)
         }
     }
-    return (*h)[0]    
+    return (*h)[0]
 }
 type IntHeap []int  //以下来自container/example_intheap_test.go (package heap_test)
 
